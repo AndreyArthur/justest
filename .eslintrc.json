@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "airbnb-base",
+    "airbnb-typescript/base"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "max-len": [
+      "error",
+      80,
+      {
+        "ignorePattern": "\/.*\/.$",
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
+    "@typescript-eslint/no-throw-literal": "off",
+    "class-methods-use-this": "off",
+    "no-console": "off",
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "_",
+        "varsIgnorePattern": "_"
+      }
+    ],
+    "@typescript-eslint/naming-convention": "off",
+    "no-underscore-dangle": "off",
+    "import/extensions": "off",
+    "@typescript-eslint/no-redeclare": "off",
+    "no-await-in-loop": "off"
+  },
+  "overrides": []
+}
