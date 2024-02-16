@@ -32,7 +32,9 @@
     "no-underscore-dangle": "off",
     "import/extensions": "off",
     "@typescript-eslint/no-redeclare": "off",
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "max-classes-per-file": "off",
+    "no-restricted-syntax": "off"
   },
   "overrides": []
 }
