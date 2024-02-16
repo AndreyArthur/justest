@@ -169,4 +169,4 @@ const justest = {
   },
 };
 
-export default justest;
+export = justest;
