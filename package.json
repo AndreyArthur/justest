@@ -8,7 +8,7 @@
     "./dist"
   ],
   "scripts": {
-    "start": "tsc && node ./dist/run.js"
+    "test": "tsc && node --test ./dist/tests/"
   },
   "keywords": [
     "test"
