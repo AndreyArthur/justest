@@ -3,12 +3,6 @@
     "target": "es5",
     "rootDir": "./lib",
     "outDir": "./dist",
-    "baseUrl": "./lib",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
