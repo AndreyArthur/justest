@@ -15,18 +15,40 @@ export default class Runner {
       logger: undefined as unknown as Logger,
     };
 
+  /**
+   * Declares a new test runner
+   *
+   * @param logger the logger instance
+   */
   constructor(logger: Logger) {
     this.__data.logger = logger;
   }
 
+  /**
+   * Register a new suite
+   *
+   * @param name the name of the suite
+   * @returns the new suite
+   */
   public suite(name: string): Suite {
     const suite = new Suite(name, this.__data.logger);
     this.__data.suites.push(suite);
     return suite;
   }
 
+  /**
+   * (Alias of suite) Register a new suite
+   *
+   * @param name the name of the suite
+   * @returns the new suite
+   */
   public describe = (name: string): Suite => this.suite(name);
 
+  /**
+   * Execute all test suites
+   *
+   * @returns a void promise
+   */
   public async execute(): Promise<void> {
     const start = Date.now();
     for (const suite of this.__data.suites) {
