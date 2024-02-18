@@ -111,6 +111,7 @@ export default class Runner {
       this.__data.count.passed += suite.__data.count.passed;
       this.__data.count.failed += suite.__data.count.failed;
       if (suite.__data.errors.length > 0) {
+        process.exitCode = 1;
         for (const error of suite.__data.errors) {
           this.__data.logger.log(
             `${suite.__data.name}: ${error.testMessage}\n`,
