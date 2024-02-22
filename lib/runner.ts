@@ -99,15 +99,25 @@ export default class Runner {
    */
   public async execute(): Promise<void> {
     const start = Date.now();
+    const suiteWithATestThatRunsOnly = this.__data.suites.find((suite) => (
+      suite.__data.hasTestsThatRunsOnly
+    ));
+    let suites;
+    if (suiteWithATestThatRunsOnly) {
+      suites = [suiteWithATestThatRunsOnly];
+      console.log(suites[0].__data.name);
+    } else {
+      suites = this.__data.suites;
+    }
     await this.__data.beforeAllCallback();
-    for (const suite of this.__data.suites) {
+    for (const suite of suites) {
       await this.__data.beforeEachCallback();
       await suite.execute();
       this.__data.logger.log('\n');
       await this.__data.afterEachCallback();
     }
     await this.__data.afterAllCallback();
-    for (const suite of this.__data.suites) {
+    for (const suite of suites) {
       this.__data.count.passed += suite.__data.count.passed;
       this.__data.count.failed += suite.__data.count.failed;
       if (suite.__data.errors.length > 0) {

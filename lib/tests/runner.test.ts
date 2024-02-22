@@ -101,4 +101,19 @@ describe('runner', () => {
     assert.strictEqual(valueWasOne, true);
     assert.strictEqual(valueWasZero, true);
   });
+
+  it('should run only a suite if it has a test that runs only', async () => {
+    let value = 0;
+    const runner = new Runner(new Logger(false));
+    const suite = runner.suite('a suite');
+    suite.testOnly('first test', () => { value += 2; });
+    suite.test('second test', () => { value -= 1; });
+    const another = runner.suite('anoter suite');
+    another.test('first test', () => { value += 10; });
+    another.test('second test', () => { value += 15; });
+
+    await runner.execute();
+
+    assert.strictEqual(value, 2);
+  });
 });

@@ -18,7 +18,9 @@ export default class Suite {
     beforeEachCallback: () => void | Promise<void>,
     afterAllCallback: () => void | Promise<void>,
     afterEachCallback: () => void | Promise<void>,
+    hasTestsThatRunsOnly: boolean,
   } = {
+      hasTestsThatRunsOnly: false,
       name: '',
       tests: [],
       count: { passed: 0, failed: 0 },
@@ -94,6 +96,34 @@ export default class Suite {
   }
 
   /**
+   * Register a new test to run alone
+   *
+   * @param message the message of the test
+   * @param callback function that will be executed when the test runs
+   * @returns void
+   */
+  public testOnly(message: string, callback: () => void | Promise<void>): void {
+    const test = new Test(message, callback, 'only');
+    this.__data.hasTestsThatRunsOnly = true;
+    this.__data.tests.push(test);
+  }
+
+  /**
+   * Register a new test that do not runs
+   *
+   * @param message the message of the test
+   * @param callback function that will be executed when the test runs
+   * @returns void
+   */
+  public testExcept(
+    message: string,
+    callback: () => void | Promise<void>,
+  ): void {
+    const test = new Test(message, callback, 'except');
+    this.__data.tests.push(test);
+  }
+
+  /**
    * (Alias of test) Register a new test into the suite
    *
    * @param message the message of the test
@@ -113,7 +143,16 @@ export default class Suite {
   public async execute(): Promise<void> {
     this.__data.logger.log(`${this.__data.name}\n`);
     await this.__data.beforeAllCallback();
-    for (const test of this.__data.tests) {
+    let tests;
+    if (this.__data.hasTestsThatRunsOnly) {
+      tests = [this.__data.tests.find((test) => test.runs === 'only') as Test];
+    } else {
+      tests = this.__data.tests;
+    }
+    for (const test of tests) {
+      if (test.runs === 'except') {
+        continue;
+      }
       await this.__data.beforeEachCallback();
       try {
         await test.execute();

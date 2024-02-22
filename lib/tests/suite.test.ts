@@ -96,4 +96,27 @@ describe('suite', () => {
     assert.strictEqual(valueIsOne, true);
     assert.strictEqual(value, 2);
   });
+
+  it('should run only a particular test', async () => {
+    let value = 0;
+    const suite = new Suite('my suite', new Logger(false));
+    suite.testOnly('first test', () => { value += 2; });
+    suite.test('second test', () => { value -= 1; });
+
+    await suite.execute();
+
+    assert.strictEqual(value, 2);
+  });
+
+  it('should run all tests except a particular test', async () => {
+    let value = 0;
+    const suite = new Suite('my suite', new Logger(false));
+    suite.testExcept('first test', () => { value += 2; });
+    suite.test('second test', () => { value -= 2; });
+    suite.test('third test', () => { value -= 1; });
+
+    await suite.execute();
+
+    assert.strictEqual(value, -3);
+  });
 });
