@@ -7,6 +7,7 @@ export default class Runner {
     count: {
       passed: number,
       failed: number,
+      skipped: number,
     }
     logger: Logger,
     beforeAllCallback: () => void | Promise<void>,
@@ -15,7 +16,7 @@ export default class Runner {
     afterEachCallback: () => void | Promise<void>,
   } = {
       suites: [],
-      count: { passed: 0, failed: 0 },
+      count: { passed: 0, failed: 0, skipped: 0 },
       logger: undefined as unknown as Logger,
       beforeAllCallback: (): void => { },
       beforeEachCallback: (): void => { },
@@ -99,13 +100,20 @@ export default class Runner {
    */
   public async execute(): Promise<void> {
     const start = Date.now();
-    const suiteWithATestThatRunsOnly = this.__data.suites.find((suite) => (
-      suite.__data.hasTestsThatRunsOnly
-    ));
-    let suites;
+    const suiteWithATestThatRunsOnlyIndex = this.__data.suites
+      .findIndex((suite) => (
+        suite.__data.hasTestsThatRunsOnly
+      ));
+    const suiteWithATestThatRunsOnly = suiteWithATestThatRunsOnlyIndex >= 0
+      ? this.__data.suites[suiteWithATestThatRunsOnlyIndex]
+      : null;
+    let suites = [];
+    let skippedSuites: Suite[] = [];
     if (suiteWithATestThatRunsOnly) {
       suites = [suiteWithATestThatRunsOnly];
-      console.log(suites[0].__data.name);
+      skippedSuites = this.__data.suites.filter((_, index) => (
+        index !== suiteWithATestThatRunsOnlyIndex
+      ));
     } else {
       suites = this.__data.suites;
     }
@@ -120,6 +128,7 @@ export default class Runner {
     for (const suite of suites) {
       this.__data.count.passed += suite.__data.count.passed;
       this.__data.count.failed += suite.__data.count.failed;
+      this.__data.count.skipped += suite.__data.count.skipped;
       if (suite.__data.errors.length > 0) {
         process.exitCode = 1;
         for (const error of suite.__data.errors) {
@@ -132,6 +141,9 @@ export default class Runner {
         }
       }
     }
+    for (const suite of skippedSuites) {
+      this.__data.count.skipped += suite.__data.tests.length;
+    }
     this.__data.logger.log('passed: ');
     this.__data.logger.log(
       `${this.__data.count.passed.toString()}\n`,
@@ -142,10 +154,15 @@ export default class Runner {
       `${this.__data.count.failed.toString()}\n`,
       Logger.colors.red,
     );
+    this.__data.logger.log('skipped: ');
+    this.__data.logger.log(
+      `${this.__data.count.skipped.toString()}\n`,
+      Logger.colors.yellow,
+    );
     this.__data.logger.log('time: ');
     this.__data.logger.log(
       `${(Date.now() - start) / 1000}s\n`,
-      Logger.colors.yellow,
+      Logger.colors.gray,
     );
   }
 }

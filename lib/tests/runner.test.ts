@@ -115,5 +115,6 @@ describe('runner', () => {
     await runner.execute();
 
     assert.strictEqual(value, 2);
+    assert.strictEqual(runner.__data.count.skipped, 3);
   });
 });

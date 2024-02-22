@@ -5,6 +5,7 @@ export default class Logger {
     green: '\x1b[32m',
     red: '\x1b[31m',
     yellow: '\x1b[33m',
+    gray: '\x1b[90m',
   };
 
   constructor(active = true) {

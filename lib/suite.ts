@@ -8,6 +8,7 @@ export default class Suite {
     count: {
       passed: number,
       failed: number,
+      skipped: number,
     },
     errors: {
       testMessage: string,
@@ -23,7 +24,7 @@ export default class Suite {
       hasTestsThatRunsOnly: false,
       name: '',
       tests: [],
-      count: { passed: 0, failed: 0 },
+      count: { passed: 0, failed: 0, skipped: 0 },
       errors: [],
       beforeAllCallback: (): void => { },
       beforeEachCallback: (): void => { },
@@ -136,6 +137,30 @@ export default class Suite {
   ): void => this.test(message, callback);
 
   /**
+   * (Alias of testOnly) Register a new test to run alone
+   *
+   * @param message the message of the test
+   * @param callback function that will be executed when the test runs
+   * @returns void
+   */
+  public itOnly = (
+    message: string,
+    callback: () => void | Promise<void>,
+  ): void => this.testOnly(message, callback);
+
+  /**
+   * (Alias of testExcept) Register a new test that do not runs
+   *
+   * @param message the message of the test
+   * @param callback function that will be executed when the test runs
+   * @returns void
+   */
+  public itExcept = (
+    message: string,
+    callback: () => void | Promise<void>,
+  ): void => this.testExcept(message, callback);
+
+  /**
    * Execute all tests in the suite
    *
    * @returns a void promise
@@ -146,11 +171,13 @@ export default class Suite {
     let tests;
     if (this.__data.hasTestsThatRunsOnly) {
       tests = [this.__data.tests.find((test) => test.runs === 'only') as Test];
+      this.__data.count.skipped = this.__data.tests.length - 1;
     } else {
       tests = this.__data.tests;
     }
     for (const test of tests) {
       if (test.runs === 'except') {
+        this.__data.count.skipped += 1;
         continue;
       }
       await this.__data.beforeEachCallback();
