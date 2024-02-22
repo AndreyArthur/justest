@@ -34,7 +34,8 @@
     "@typescript-eslint/no-redeclare": "off",
     "no-await-in-loop": "off",
     "max-classes-per-file": "off",
-    "no-restricted-syntax": "off"
+    "no-restricted-syntax": "off",
+    "no-continue": "off"
   },
   "overrides": []
 }
